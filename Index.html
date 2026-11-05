@@ -1,1 +1,58 @@
+let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+let reportes = JSON.parse(localStorage.getItem("reportes")) || [];
+let activo = null;
+
+function registrar() {
+  let nombre = prompt("Nombre:");
+  let correo = prompt("Correo:");
+  let pass = prompt("Contraseña:");
+
+  if (!nombre || !correo || !pass) alert("Faltan datos");
+  else if (usuarios.find(u => u.correo === correo)) alert("Correo registrado");
+  else {
+    usuarios.push({nombre, correo, pass});
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    alert("Registro exitoso");
+  }
+}
+
+function iniciar() {
+  let c = prompt("Correo:"), p = prompt("Contraseña:");
+  activo = usuarios.find(u => u.correo === c && u.pass === p);
+  if (activo) alert("Bienvenido " + activo.nombre);
+  else alert("Datos incorrectos");
+}
+
+function reportar() {
+  if (!activo) alert("Inicia sesión");
+  else {
+    let tipo = prompt("1-Bacheo 2-Alumbrado 3-Basura");
+    let desc = prompt("Descripción:");
+    if (!tipo || !desc) alert("Faltan datos");
+    else {
+      reportes.push({correo: activo.correo, tipo, desc});
+      localStorage.setItem("reportes", JSON.stringify(reportes));
+      alert("Reporte enviado");
+    }
+  }
+}
+
+function consultar() {
+  if (!activo) alert("Inicia sesión");
+  else {
+    let mis = reportes.filter(r => r.correo === activo.correo);
+    if (mis.length) alert(mis.map(r => r.tipo + ": " + r.desc).join("\n"));
+    else alert("Sin reportes");
+  }
+}
+
+let op = "";
+while (op !== "6" && op !== null) {
+  op = prompt("1-Registrar 2-Iniciar 3-Reportar 4-Consultar 5-Cerrar sesión 6-Salir");
+  if (op === "1") registrar();
+  else if (op === "2") iniciar();
+  else if (op === "3") reportar();
+  else if (op === "4") consultar();
+  else if (op === "5") activo = null;
+  else if (op !== "6" && op !== null) alert("Opción inválida");
 
